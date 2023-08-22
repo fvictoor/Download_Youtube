@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import filedialog, messagebox
 from pytube import YouTube
+from pytube import Playlist
 from pkg_resources import resource_filename
 import os
 
@@ -41,6 +42,25 @@ def baixarAudio():
     #Poup-up de sucesso!
     messagebox.showinfo(message="Audio baixado com sucesso!")
 
+def baixarPlaylist():
+    # URL da playlist do YouTube
+    playlist_url = [entry0.get()]
+
+    # Crie um objeto Playlist
+    playlist = Playlist(str(playlist_url[0]))
+    save_path = filedialog.asksaveasfilename(title="Nova pasta para salvar os arquivo", filetypes=[("Video MP4", ".mp4")])
+    # Percorra os vídeos na playlist
+    for video in playlist.videos:
+        try:
+            stream = video.streams.get_highest_resolution()
+
+            stream.download(output_path=save_path)
+            #Poup-up de sucesso!
+            messagebox.showinfo(message="Video baixado com sucesso!")
+        except Exception as e:
+            print(f"Ocorreu um erro ao baixar {video.title}: {e}")
+
+
 #Cria janela e redimenciona e insere o icone
 window = Tk()
 window.geometry("800x560")
@@ -78,6 +98,12 @@ imgAudio_imp = resource_filename(__name__,r"img\\img1.png" )
 imgAudio = PhotoImage(file = imgAudio_imp)
 b1 = Button(image = imgAudio,borderwidth = 0, highlightthickness = 0, command = baixarAudio, relief = "flat")
 b1.place(x = 628, y = 307, width = 144, height = 49)
+
+#Importa imagem do botão para baixar Playlist e posiciona
+imgPlaylist_imp = resource_filename(__name__,r"img\\img2.png" )
+imgPlaylist = PhotoImage(file = imgPlaylist_imp)
+b2 = Button(image = imgPlaylist, borderwidth = 0,highlightthickness = 0,command = baixarPlaylist, relief = "flat")
+b2.place(x = 440, y = 370, width = 131,height = 53)
 
 #Finaliza a Janela
 window.resizable(False, False)
